@@ -66,9 +66,21 @@ return (
 
 <main className="
 min-h-screen
-bg-slate-100
-dark:bg-slate-950
-p-6
+bg-gradient-to-br
+from-slate-50
+via-blue-50
+to-indigo-100
+dark:from-slate-950
+dark:via-slate-900
+dark:to-blue-950
+p-4
+md:p-8
+">
+
+
+<div className="
+max-w-6xl
+mx-auto
 ">
 
 
@@ -86,14 +98,37 @@ onImport={props.importFile}
 
 
 
-<div className="max-w-5xl mx-auto">
+<section className="
+mb-8
+">
 
 
-<h1 className="text-4xl font-black mb-2">
+<h1 className="
+text-5xl
+md:text-6xl
+font-black
+tracking-tight
+">
 
 🚀 StudyDrive
 
 </h1>
+
+
+<p className="
+mt-3
+text-slate-600
+dark:text-slate-300
+text-lg
+">
+
+Tvůj osobní systém pro učení a dosažení cílů.
+
+</p>
+
+
+</section>
+
 
 
 
@@ -124,7 +159,12 @@ achievements={props.stats.totalAchievements}
 
 
 
-
+<div className="
+grid
+md:grid-cols-2
+gap-6
+mt-6
+">
 
 
 <ProgressSection
@@ -134,13 +174,32 @@ progress={props.stats.averageProgress}
 />
 
 
-
 <ActivitySection
 
 activity={props.activity}
 
 />
 
+
+</div>
+
+
+
+
+<section className="
+mt-6
+">
+
+
+<h2 className="
+text-2xl
+font-black
+mb-4
+">
+
+🎯 Moje cíle
+
+</h2>
 
 
 <GoalList
@@ -160,6 +219,9 @@ updateProgress={props.updateProgress}
 removeNode={props.removeNode}
 
 />
+
+
+</section>
 
 
 
