@@ -8,6 +8,8 @@ node:StudyNode
 onAdd:(id:string,name:string)=>void
 onProgress:(id:string)=>void
 onDelete:(id:string)=>void
+
+onComplete:()=>void
 }
 
 
@@ -16,7 +18,8 @@ export default function TreeNode({
 node,
 onAdd,
 onProgress,
-onDelete
+onDelete,
+onComplete
 }:Props){
 
 
@@ -87,7 +90,10 @@ width:`${node.progress}%`
 
 <button
 
-onClick={()=>onProgress(node.id)}
+onClick={()=>{
+onProgress(node.id)
+onComplete()
+}}
 
 className="
 px-4 py-2
@@ -152,6 +158,8 @@ onAdd={onAdd}
 onProgress={onProgress}
 
 onDelete={onDelete}
+
+onComplete={onComplete}
 
 />
 

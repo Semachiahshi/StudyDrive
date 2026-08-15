@@ -42,6 +42,10 @@ addChapter:(goalId:string,name:string)=>void
 
 addSubChapter:(goalId:string,nodeId:string,name:string)=>void
 
+removeGoal:(goalId:string)=>void
+
+addActivity:()=>void
+
 updateProgress:(goalId:string,nodeId:string)=>void
 
 removeNode:(goalId:string,nodeId:string)=>void
@@ -146,6 +150,10 @@ goals={props.data.goals}
 addChapter={props.addChapter}
 
 addSubChapter={props.addSubChapter}
+
+removeGoal={props.removeGoal}
+
+addActivity={props.addActivity}
 
 updateProgress={props.updateProgress}
 

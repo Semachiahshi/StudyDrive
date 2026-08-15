@@ -11,6 +11,9 @@ addChapter:(goalId:string,name:string)=>void
 updateProgress:(goalId:string,nodeId:string)=>void
 removeNode:(goalId:string,nodeId:string)=>void
 addSubChapter:(goalId:string,nodeId:string,name:string)=>void
+removeGoal:(goalId:string)=>void
+
+addActivity:()=>void
 }
 
 
@@ -19,7 +22,9 @@ goals,
 addChapter,
 updateProgress,
 removeNode,
-addSubChapter
+addSubChapter,
+removeGoal,
+addActivity
 }:Props){
 
 const [chapter,setChapter]=useState("")
@@ -44,9 +49,24 @@ mb-6
 >
 
 
-<h2 className="font-bold text-xl mb-4">
+<div className="flex justify-between items-center mb-4">
+
+<h2 className="font-bold text-xl">
 {goal.name}
 </h2>
+
+
+<button
+
+onClick={()=>removeGoal(goal.id)}
+
+className="text-red-500"
+
+>
+Smazat
+</button>
+
+</div>
 
 
 <div className="flex gap-3 mb-4">
@@ -94,6 +114,8 @@ onAdd={(nodeId,name)=>addSubChapter(goal.id,nodeId,name)}
 onProgress={(id)=>updateProgress(goal.id,id)}
 
 onDelete={(id)=>removeNode(goal.id,id)}
+
+onComplete={addActivity}
 
 />
 

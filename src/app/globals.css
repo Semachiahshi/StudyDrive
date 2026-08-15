@@ -63,8 +63,25 @@ input{
   }
 
   main{
+    padding:12px!important;
     padding-bottom:100px;
   }
+
+
+  button{
+    min-height:44px;
+  }
+
+
+  input{
+    min-height:44px;
+  }
+
+
+  h1{
+    font-size:2rem!important;
+  }
+
 
 }
 

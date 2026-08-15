@@ -236,6 +236,22 @@ nodes:edit(g.nodes)
 
 
 
+
+function removeGoal(
+goalId:string
+){
+
+update({
+
+goals:data.goals.filter(
+g=>g.id!==goalId
+)
+
+})
+
+}
+
+
 function remove(
 goalId:string,
 nodeId:string
@@ -285,7 +301,8 @@ addGoal,
 addChapter,
 addSubChapter,
 progress,
-remove
+remove,
+removeGoal
 
 }
 

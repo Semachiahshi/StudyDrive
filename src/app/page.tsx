@@ -26,7 +26,8 @@ update
 
 const {
 activity,
-streak
+streak,
+addStudyActivity
 }=useActivity()
 
 
@@ -49,6 +50,7 @@ const {
 addGoal,
 addChapter,
 addSubChapter,
+removeGoal,
 progress:updateProgress,
 remove:removeNode
 }=useGoals(
@@ -91,6 +93,12 @@ importFile={importFile}
 addChapter={addChapter}
 
 addSubChapter={addSubChapter}
+
+removeGoal={removeGoal}
+
+addActivity={()=>{
+addStudyActivity(5)
+}}
 
 updateProgress={updateProgress}
 
