@@ -35,14 +35,16 @@ export function LoginForm({ initialError }: { initialError?: string }) {
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
-          pattern="[0-9 ]{6,7}"
-          maxLength={7}
+          pattern="[0-9 ]{6,12}"
+          maxLength={12}
           required
           autoFocus
           placeholder="123456"
           className="tabular text-center text-title-2 tracking-[0.3em]"
         />
-        <p className="px-1 text-caption text-label-2">Kód platí 15 minut. Odeslán na {state.email}.</p>
+        <p className="px-1 text-caption text-label-2">
+          Odesláno na {state.email}. Pokud e-mail obsahuje jen odkaz, klikni na něj v tomto prohlížeči.
+        </p>
       </div>
       <FormError message={state.error} />
       <SubmitButton className="w-full">Přihlásit se</SubmitButton>
