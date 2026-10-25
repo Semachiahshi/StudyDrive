@@ -11,7 +11,8 @@ export type LoginState =
   | { step: "code"; email: string; error?: string; notice?: string };
 
 const emailSchema = z.email().max(254);
-const codeSchema = z.string().regex(/^\d{6}$/);
+// Supabase email codes are 6 digits by default; projects can configure up to 10.
+const codeSchema = z.string().regex(/^\d{6,10}$/);
 
 async function siteOrigin() {
   const h = await headers();
@@ -46,7 +47,7 @@ export async function requestCode(_prev: LoginState, formData: FormData): Promis
   return {
     step: "code",
     email,
-    notice: "Pokud je tento e-mail povolený, poslali jsme na něj 6místný kód.",
+    notice: "Pokud je tento e-mail povolený, poslali jsme na něj přihlašovací kód.",
   };
 }
 
@@ -55,7 +56,7 @@ export async function verifyCode(prev: LoginState, formData: FormData): Promise<
   if (formData.get("intent") === "back") return { step: "email" };
 
   const token = String(formData.get("code") ?? "").replace(/\s/g, "");
-  if (!codeSchema.safeParse(token).success) return { ...prev, notice: undefined, error: "Kód má 6 číslic." };
+  if (!codeSchema.safeParse(token).success) return { ...prev, notice: undefined, error: "Zadej celý číselný kód z e-mailu." };
   if (!isOwnerEmail(prev.email)) return { ...prev, notice: undefined, error: "Kód není platný nebo vypršel." };
 
   const supabase = await createClient();
