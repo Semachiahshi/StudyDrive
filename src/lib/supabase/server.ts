@@ -1,15 +1,27 @@
+import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { supabasePublicEnv } from "@/lib/env";
+import type { Database } from "./database.types";
 
-export async function createSupabaseServerClient() {
+/** Supabase client acting as the signed-in user (RLS applies). */
+export async function createClient() {
+  const env = supabasePublicEnv();
+  if (!env) throw new Error("Supabase is not configured");
   const cookieStore = await cookies();
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  return createServerClient(url, key, {
+
+  return createServerClient<Database>(env.url, env.key, {
     cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: () => {},
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Called from a Server Component; the proxy refreshes the session.
+        }
+      },
     },
   });
 }
