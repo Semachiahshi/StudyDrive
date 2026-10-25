@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { addDays, czPlural, daysBetween, formatDateWindow, isoWeekday, localDate, relativeDays } from "./dates";
 import { computeTrackPace, roundUpPace, type TrackPaceInput } from "./pace";
 import { combine, summarize } from "./progress";
+import { pickBlocker, summarizeReadingList, type ReadingWork } from "./reading";
 import { planReminders, renderReminderEmail, DEFAULT_REMINDER_PREFERENCES } from "./reminders";
 import { canComplete, canReopen, nextStep, type StepState } from "./steps";
 import { computeStreak } from "./streak";
@@ -220,5 +221,62 @@ describe("reminders", () => {
         prefs: { ...base.prefs, study_reminder_weekdays: [1, 2, 3, 4, 5] },
       }),
     ).toBeNull();
+  });
+});
+
+describe("reading list", () => {
+  let n = 0;
+  const work = (period: ReadingWork["period"], form: ReadingWork["form"] = "prose", author = `a${++n}`): ReadingWork => ({
+    id: `w${++n}`,
+    author_key: author,
+    period,
+    form,
+  });
+  const valid = (): ReadingWork[] => [
+    work("before_1800", "drama"),
+    work("before_1800", "drama"),
+    work("century_19", "poetry"),
+    work("century_19", "poetry"),
+    work("century_19"),
+    ...Array.from({ length: 4 }, () => work("world_modern")),
+    ...Array.from({ length: 11 }, () => work("czech_modern")),
+  ];
+
+  it("accepts a list that meets every rule", () => {
+    const summary = summarizeReadingList(valid());
+    expect(summary.count).toBe(20);
+    expect(summary.complete).toBe(true);
+  });
+
+  it("is incomplete while a minimum is missing", () => {
+    const list = valid().slice(0, 19);
+    expect(summarizeReadingList(list).complete).toBe(false);
+  });
+
+  it("refuses a 21st work and a third work by one author", () => {
+    expect(pickBlocker(valid(), work("czech_modern"))).toMatch(/20/);
+    const picked = [work("czech_modern", "prose", "capek"), work("czech_modern", "drama", "capek")];
+    expect(pickBlocker(picked, work("czech_modern", "prose", "capek"))).toMatch(/autora/);
+    expect(pickBlocker(picked, work("czech_modern", "prose", "hrabal"))).toBeNull();
+  });
+
+  it("keeps enough slots for the missing period minimums", () => {
+    // 6 free picks beyond the 14 required ones, all spent on Czech modern works.
+    const picked = [...Array.from({ length: 11 }, () => work("czech_modern"))];
+    expect(pickBlocker(picked, work("czech_modern"))).toMatch(/18. století/);
+    expect(pickBlocker(picked, work("before_1800"))).toBeNull();
+  });
+
+  it("keeps enough slots for poetry and drama", () => {
+    const picked = [
+      work("before_1800"),
+      work("before_1800"),
+      ...Array.from({ length: 3 }, () => work("century_19")),
+      ...Array.from({ length: 4 }, () => work("world_modern")),
+      ...Array.from({ length: 7 }, () => work("czech_modern")),
+    ];
+    // 16 prose works picked: the last 4 slots must go to poetry and drama.
+    expect(pickBlocker(picked, work("czech_modern"))).toMatch(/poezie, drama/);
+    expect(pickBlocker(picked, work("czech_modern", "poetry"))).toBeNull();
   });
 });

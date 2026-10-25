@@ -45,6 +45,12 @@ three. Also: `admin_tasks` (deadlines), `study_files` + `notes`,
 `study_sessions` and `step_completions` (streak history), `profiles` (pace
 assumptions), `reminder_preferences`, `reminder_log` (dedupe).
 
+Reading list (`reading_works`): the school's list of literary works for the
+Czech oral exam, stored on that exam track. Picking a work on the track page
+checks the rules (20 works; at least 2/3/4/5 per period; at least 2 each of
+prose, poetry and drama; at most 2 per author) and adds it as a topic with an
+analysis outline in its notes. The list itself is imported, not edited in the app.
+
 Everything except the reminder log can be edited, archived or deleted later.
 
 ## Security model

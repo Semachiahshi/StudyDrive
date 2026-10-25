@@ -5,9 +5,10 @@ import { ArchiveButton, DeleteButton } from "@/components/entity-controls";
 import { TRACK_KIND_LABEL, TrackFields } from "@/components/fields";
 import { SheetForm } from "@/components/forms";
 import { Icon } from "@/components/icon";
+import { ReadingList } from "@/components/reading-list";
 import { TopicRow } from "@/components/topic-row";
 import { Card, EmptyState, Field, PageHeader, ProgressRing, Section, StatusBadge, Textarea } from "@/components/ui";
-import { loadModel, requireItem } from "@/lib/data";
+import { loadModel, loadReadingWorks, requireItem } from "@/lib/data";
 import { formatDate, formatDateWindow, formatDays, formatSteps, relativeDays } from "@/lib/domain/dates";
 import type { Pace } from "@/lib/domain/pace";
 import { percent } from "@/lib/domain/progress";
@@ -17,7 +18,7 @@ export const metadata: Metadata = { title: "Okruh zkoušky" };
 
 export default async function TrackPage({ params }: PageProps<"/tracks/[trackId]">) {
   const { trackId } = await params;
-  const { data, model } = await loadModel();
+  const [{ data, model }, readingWorks] = await Promise.all([loadModel(), loadReadingWorks(trackId)]);
   const track = requireItem(data.tracks, (t) => t.id === trackId);
   const subject = requireItem(data.subjects, (s) => s.id === track.subject_id);
   const subjectView = model.subjects.find((s) => s.subject.id === subject.id);
@@ -111,6 +112,8 @@ export default async function TrackPage({ params }: PageProps<"/tracks/[trackId]
       )}
 
       {track.notes && <Card className="mb-6 whitespace-pre-wrap p-4 text-subheadline text-label-2">{track.notes}</Card>}
+
+      {readingWorks.length > 0 && <ReadingList works={readingWorks} />}
 
       <Section title="Témata" description="Naučit → Procvičit → Zopakovat. Téma je hotové až po všech třech krocích.">
         {topics.length === 0 ? (

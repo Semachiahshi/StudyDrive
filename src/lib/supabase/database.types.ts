@@ -109,6 +109,32 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"reading_works": {
+                  Row: {
+                    "author": string,"author_key": string,"created_at": string,"form": Database["public"]['Enums']["literary_form"],"id": string,"period": Database["public"]['Enums']["literary_period"],"position": number,"title": string,"topic_id": string | null,"track_id": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author": string,"author_key": string,"created_at"?: string,"form": Database["public"]['Enums']["literary_form"],"id"?: string,"period": Database["public"]['Enums']["literary_period"],"position"?: number,"title": string,"topic_id"?: string | null,"track_id": string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Update: {
+                    "author"?: string,"author_key"?: string,"created_at"?: string,"form"?: Database["public"]['Enums']["literary_form"],"id"?: string,"period"?: Database["public"]['Enums']["literary_period"],"position"?: number,"title"?: string,"topic_id"?: string | null,"track_id"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+                      foreignKeyName: "reading_works_topic_id_user_id_fkey"
+                      columns: ["topic_id", "user_id"]
+                      isOneToOne: false
+                      referencedRelation: "topics"
+                      referencedColumns: ["id", "user_id"]
+                    },{
+                      foreignKeyName: "reading_works_track_id_user_id_fkey"
+                      columns: ["track_id", "user_id"]
+                      isOneToOne: false
+                      referencedRelation: "exam_tracks"
+                      referencedColumns: ["id", "user_id"]
+                    }
+                  ]
                 },"reminder_log": {
                   Row: {
                     "dedupe_key": string,"id": string,"sent_at": string,"user_id": string
@@ -325,7 +351,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "exam_date_status": "provisional"|"confirmed","topic_step": "learn"|"practice"|"review","track_kind": "didactic_test"|"essay"|"oral"|"practical"|"other"
+            "exam_date_status": "provisional"|"confirmed","literary_form": "prose"|"poetry"|"drama","literary_period": "before_1800"|"century_19"|"world_modern"|"czech_modern","topic_step": "learn"|"practice"|"review","track_kind": "didactic_test"|"essay"|"oral"|"practical"|"other"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -445,7 +471,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "exam_date_status": ["provisional", "confirmed"],"topic_step": ["learn", "practice", "review"],"track_kind": ["didactic_test", "essay", "oral", "practical", "other"]
+            "exam_date_status": ["provisional", "confirmed"],"literary_form": ["prose", "poetry", "drama"],"literary_period": ["before_1800", "century_19", "world_modern", "czech_modern"],"topic_step": ["learn", "practice", "review"],"track_kind": ["didactic_test", "essay", "oral", "practical", "other"]
           }
         }
 } as const

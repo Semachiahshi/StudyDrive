@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { fail, ok, type ActionState } from "@/lib/action-state";
 import { requireOwner } from "@/lib/auth";
+import { ANALYSIS_OUTLINE, pickBlocker } from "@/lib/domain/reading";
 import { STEPS } from "@/lib/domain/steps";
 
 // ---------------------------------------------------------------- helpers
@@ -166,6 +167,57 @@ export async function updateTopic(_: ActionState, fd: FormData): Promise<ActionS
   const { id, ...values } = parsed.data;
   const { error } = await supabase.from("topics").update(values).eq("id", id);
   return dbError(error);
+}
+
+// ---------------------------------------------------------------- reading list
+
+/** Picks a work for the reading list: checks the rules and adds it as a topic of its track. */
+export async function pickReadingWork(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase } = await requireOwner();
+  const id = uuid.safeParse(fd.get("id"));
+  if (!id.success) return fail("Neplatný požadavek.");
+  const { data: work } = await supabase.from("reading_works").select("*").eq("id", id.data).maybeSingle();
+  if (!work) return fail("Dílo nebylo nalezeno.");
+  if (work.topic_id) return done();
+
+  const { data: picked } = await supabase
+    .from("reading_works")
+    .select("id, author_key, period, form")
+    .eq("track_id", work.track_id)
+    .not("topic_id", "is", null);
+  const blocker = pickBlocker(picked ?? [], work);
+  if (blocker) return fail(blocker);
+
+  const position = await nextPosition(supabase, "topic", work.track_id);
+  const { data: topic, error } = await supabase
+    .from("topics")
+    .insert({ track_id: work.track_id, title: `${work.author}: ${work.title}`, notes: ANALYSIS_OUTLINE, position })
+    .select("id")
+    .single();
+  if (error || !topic) return dbError(error);
+  const { error: linkError } = await supabase.from("reading_works").update({ topic_id: topic.id }).eq("id", work.id);
+  if (linkError) {
+    await supabase.from("topics").delete().eq("id", topic.id);
+    return dbError(linkError);
+  }
+  return done();
+}
+
+/** Removes a work from the reading list together with its topic, unless work on it has started. */
+export async function unpickReadingWork(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase } = await requireOwner();
+  const id = uuid.safeParse(fd.get("id"));
+  if (!id.success) return fail("Neplatný požadavek.");
+  const { data: work } = await supabase.from("reading_works").select("topic_id").eq("id", id.data).maybeSingle();
+  if (!work) return fail("Dílo nebylo nalezeno.");
+  if (!work.topic_id) return done();
+  const { data: topic } = await supabase.from("topics").select("completed_steps").eq("id", work.topic_id).maybeSingle();
+  if ((topic?.completed_steps ?? 0) > 0) {
+    return fail("U díla už máš splněné kroky. Nejdřív je vrať, nebo téma smaž.");
+  }
+  // Deleting the topic clears the pick (topic_id is set to null by the foreign key).
+  const { error } = await supabase.from("topics").delete().eq("id", work.topic_id);
+  return dbError(error, "Dílo se nepodařilo odebrat.");
 }
 
 // ---------------------------------------------------------------- shared: archive, delete, reorder

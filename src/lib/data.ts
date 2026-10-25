@@ -15,6 +15,7 @@ export type ProfileRow = Tables["profiles"]["Row"];
 export type ReminderPrefsRow = Tables["reminder_preferences"]["Row"];
 export type FileRow = Tables["study_files"]["Row"];
 export type NoteRow = Tables["notes"]["Row"];
+export type ReadingWorkRow = Tables["reading_works"]["Row"];
 export type SessionRow = Tables["study_sessions"]["Row"] & { topics: { title: string; track_id: string } | null };
 
 export type StudyData = {
@@ -103,6 +104,15 @@ export const loadFilesAndNotes = cache(async () => {
     supabase.from("notes").select("*").order("updated_at", { ascending: false }),
   ]);
   return { userId, files: check(files, "souborů"), notes: check(notes, "poznámek") };
+});
+
+/** The school's reading list attached to an exam track (empty for most tracks). */
+export const loadReadingWorks = cache(async (trackId: string) => {
+  const { supabase } = await requireOwner();
+  return check(
+    await supabase.from("reading_works").select("*").eq("track_id", trackId).order("position").order("author"),
+    "seznamu četby",
+  );
 });
 
 /** Finds an item loaded for the owner, or shows the 404 page. */
