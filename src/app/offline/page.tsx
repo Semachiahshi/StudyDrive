@@ -12,7 +12,7 @@ export default function OfflinePage() {
         </div>
         <h1 className="mt-4 text-title-2 font-bold">Jsi offline</h1>
         <p className="mt-2 text-subheadline text-label-2">
-          StudyDrive potřebuje připojení, aby ukázal aktuální postup. Jakmile budeš zase online, obnov stránku.
+          Tuhle stránku zatím nemáš uloženou. Stránky, které jsi otevřel online, se ukážou i bez připojení. Jakmile budeš zase online, obnov stránku.
         </p>
       </div>
     </main>
