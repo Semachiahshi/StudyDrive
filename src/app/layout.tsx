@@ -23,7 +23,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="cs">
+    // The service worker marks offline copies with a data-snapshot attribute.
+    <html lang="cs" suppressHydrationWarning>
       <body className="min-h-dvh bg-bg text-label antialiased">
         {children}
         <ServiceWorkerRegistration />
