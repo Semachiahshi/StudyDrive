@@ -21,18 +21,23 @@ export const viewport: Viewport = {
   ],
 };
 
-// Browsers without cascade layers (Safari before 15.4, e.g. iPad Air 2 on
-// iOS 12) drop every Tailwind rule, so they get public/legacy.css instead,
-// built by scripts/build-legacy-css.mjs. Plain ES5 so old Safari can run it.
-const legacyStylesScript =
-  "if(!window.CSSLayerBlockRule){var l=document.createElement('link');l.rel='stylesheet';l.href='/legacy.css';document.head.appendChild(l)}";
+// Old Safari (before 15.4, e.g. iPad Air 2 on iOS 12) has no cascade layers,
+// so it drops every Tailwind rule, and lacks a few APIs the app uses. Such
+// browsers get public/legacy.css (built by scripts/build-legacy-css.mjs) and
+// public/legacy.js (polyfills), written in synchronously so the polyfills run
+// before the app's scripts. The sidebar state is restored here too, before
+// first paint. Plain ES5 so old Safari can run it.
+const headScript = [
+  "if(!window.CSSLayerBlockRule){document.write('<link rel=\"stylesheet\" href=\"/legacy.css\"><script src=\"/legacy.js\"><\\/script>')}",
+  "try{if(localStorage.getItem('sidebar')==='collapsed')document.documentElement.setAttribute('data-sidebar','collapsed')}catch(e){}",
+].join(";");
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // The service worker marks offline copies with a data-snapshot attribute.
     <html lang="cs" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: legacyStylesScript }} />
+        <script dangerouslySetInnerHTML={{ __html: headScript }} />
       </head>
       <body className="min-h-dvh bg-bg text-label antialiased">
         {children}

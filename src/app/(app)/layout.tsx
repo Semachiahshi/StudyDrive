@@ -9,8 +9,8 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <Suspense fallback={<SidebarView pathname={null} />}>
         <Sidebar />
       </Suspense>
-      <div className="lg:pl-60">
-        <main className="mx-auto w-full max-w-5xl px-4 pb-28 pt-[max(env(safe-area-inset-top),0.75rem)] sm:px-6 lg:px-10 lg:pb-16">
+      <div className="app-content">
+        <main className="@container mx-auto w-full max-w-5xl px-4 pb-28 pt-[max(env(safe-area-inset-top),0.75rem)] sm:px-6 md:pb-16 lg:px-10">
           <OfflineBanner />
           {children}
         </main>

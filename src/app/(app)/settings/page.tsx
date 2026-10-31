@@ -48,7 +48,7 @@ export default async function SettingsPage() {
         <div id="tempo" className="scroll-mt-6" />
         <Card>
           <InlineForm action={updatePaceSettings}>
-            <div className="grid gap-4 p-4 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 p-4 @xl:grid-cols-3">
               <Field label="Rezerva před zkouškou" htmlFor="buffer" hint={`Vše má být hotové ${formatDays(profile.buffer_days)} před zkouškou.`}>
                 <Input id="buffer" name="buffer_days" type="number" min={0} max={120} required defaultValue={profile.buffer_days} />
               </Field>

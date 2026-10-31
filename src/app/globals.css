@@ -203,6 +203,88 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/*
+ * App shell: tab bar on iPhone, sidebar from iPad portrait up. The sidebar
+ * collapses to an icon rail (html[data-sidebar="collapsed"], see app-nav).
+ * Plain CSS outside Tailwind layers so old Safari (iOS 12) applies it too.
+ */
+.app-sidebar {
+  width: 15rem;
+}
+
+@media (min-width: 48rem) {
+  .app-sidebar {
+    display: flex;
+  }
+  .app-tabbar {
+    display: none;
+  }
+  .app-content {
+    padding-left: 15rem;
+  }
+  html[data-sidebar="collapsed"] .app-content {
+    padding-left: 4.5rem;
+  }
+}
+
+html[data-sidebar="collapsed"] .app-sidebar {
+  width: 4.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+html[data-sidebar="collapsed"] .app-sidebar .nav-label {
+  display: none;
+}
+
+html[data-sidebar="collapsed"] .app-sidebar .sidebar-head {
+  flex-direction: column;
+  align-items: center;
+}
+
+html[data-sidebar="collapsed"] .app-sidebar .nav-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Three hero cards on two columns: the last one takes the full row. */
+@container (min-width: 36rem) and (max-width: 55.99rem) {
+  .hero-cards > :last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+}
+
+/* Old Safari: <dialog> polyfill from public/legacy.js. */
+dialog:not([open]) {
+  display: none;
+}
+
+dialog[data-modal] {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 50;
+  margin: 0;
+  border: 0;
+  max-height: 90vh;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  -webkit-animation: none;
+  animation: none;
+}
+
+.legacy-dialog-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.32);
+}
+
 dialog::backdrop {
   background: rgb(0 0 0 / 0.32);
 }

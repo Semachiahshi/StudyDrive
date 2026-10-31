@@ -19,7 +19,7 @@ function TaskFields({ task, subjects }: { task?: AdminTaskRow; subjects: Subject
       <Field label="Co je potřeba udělat" htmlFor={`task-title-${p}`}>
         <Input id={`task-title-${p}`} name="title" required maxLength={200} defaultValue={task?.title} placeholder="Např. Podat přihlášku k maturitě" />
       </Field>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         <Field label="Termín (nejpozději do)" htmlFor={`task-due-${p}`}>
           <Input id={`task-due-${p}`} name="due_on" type="date" defaultValue={task?.due_on ?? ""} />
         </Field>

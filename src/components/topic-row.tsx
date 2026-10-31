@@ -15,7 +15,7 @@ export function TopicRow({ topic, index, count }: { topic: Topic; index: number;
   const complete = next === null;
 
   return (
-    <li className="flex flex-col gap-3 px-4 py-3.5 sm:flex-row sm:items-center">
+    <li className="flex flex-col gap-3 px-4 py-3.5 @2xl:flex-row @2xl:items-center">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <span
           className={cx(
@@ -32,7 +32,7 @@ export function TopicRow({ topic, index, count }: { topic: Topic; index: number;
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1.5 pl-9 sm:pl-0" role="group" aria-label={`Kroky: ${topic.title}`}>
+      <div className="flex flex-wrap items-center gap-1.5 pl-9 @2xl:pl-0" role="group" aria-label={`Kroky: ${topic.title}`}>
         {STEPS.map((step) => {
           const done = isStepDone(topic, step);
           const completedAt = topic[`${step}_completed_at`];
@@ -110,6 +110,14 @@ export function TopicRow({ topic, index, count }: { topic: Topic; index: number;
           triggerIcon="pencil"
           triggerVariant="plain"
           triggerSize="sm"
+          extra={
+            <div className="flex flex-wrap items-center gap-2 rounded-xl bg-surface-2 p-3">
+              <span className="mr-auto text-footnote text-label-2">Pořadí a správa</span>
+              <MoveButtons entity="topic" id={topic.id} first={index === 0} last={index === count - 1} />
+              <ArchiveButton entity="topic" id={topic.id} archived={!!topic.archived_at} />
+              <DeleteButton entity="topic" id={topic.id} confirmText={`Smazat téma „${topic.title}“? Postup u něj se ztratí.`} />
+            </div>
+          }
         >
           <input type="hidden" name="id" value={topic.id} />
           <Field label="Název" htmlFor={`topic-title-${topic.id}`}>
@@ -118,12 +126,6 @@ export function TopicRow({ topic, index, count }: { topic: Topic; index: number;
           <Field label="Poznámka" htmlFor={`topic-notes-${topic.id}`}>
             <Textarea id={`topic-notes-${topic.id}`} name="notes" maxLength={10000} defaultValue={topic.notes ?? ""} />
           </Field>
-          <div className="flex flex-wrap items-center gap-2 rounded-xl bg-surface-2 p-3">
-            <span className="mr-auto text-footnote text-label-2">Pořadí a správa</span>
-            <MoveButtons entity="topic" id={topic.id} first={index === 0} last={index === count - 1} />
-            <ArchiveButton entity="topic" id={topic.id} archived={!!topic.archived_at} />
-            <DeleteButton entity="topic" id={topic.id} confirmText={`Smazat téma „${topic.title}“? Postup u něj se ztratí.`} />
-          </div>
         </SheetForm>
       </div>
     </li>

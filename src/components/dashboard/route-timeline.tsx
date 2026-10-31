@@ -22,7 +22,7 @@ export function RouteTimeline({ today, events }: { today: string; events: Timeli
   return (
     <div className="rounded-card bg-surface p-4 shadow-card sm:p-5">
       {/* Wide: proportional horizontal route */}
-      <div className="hidden md:block">
+      <div className="hidden @2xl:block">
         <div className="relative mx-3 mb-2 mt-10 h-1 rounded-full bg-fill">
           <div className="absolute -top-7 left-0 -translate-x-1/2 text-caption font-semibold text-accent-text">Dnes</div>
           <div className="absolute -top-1.5 left-0 size-4 -translate-x-1/2 rounded-full border-4 border-surface bg-accent shadow" />
