@@ -19,7 +19,10 @@ export function localDate(at: Date = new Date(), timeZone = APP_TIME_ZONE): IsoD
     });
     isoFormatterCache.set(timeZone, fmt);
   }
-  return fmt.format(at);
+  // Assembled from parts: older engines format en-CA differently.
+  const parts: Record<string, string> = {};
+  for (const p of fmt.formatToParts(at)) parts[p.type] = p.value;
+  return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
 function toUtcMs(date: IsoDate): number {
@@ -46,13 +49,15 @@ export function isIsoDate(value: unknown): value is IsoDate {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(toUtcMs(value));
 }
 
-const plural = new Intl.PluralRules("cs");
-
-/** Czech plural form, e.g. czPlural(3, ["den", "dny", "dní"]) → "dny". */
+/**
+ * Czech plural form, e.g. czPlural(3, ["den", "dny", "dní"]) → "dny".
+ * Spelled out instead of Intl.PluralRules, which old Safari (iOS 12) lacks.
+ */
 export function czPlural(n: number, [one, few, many]: [string, string, string]): string {
-  const rule = plural.select(Math.abs(n));
-  if (rule === "one") return one;
-  if (rule === "few") return few;
+  const abs = Math.abs(n);
+  if (!Number.isInteger(abs)) return many;
+  if (abs === 1) return one;
+  if (abs >= 2 && abs <= 4) return few;
   return many;
 }
 
