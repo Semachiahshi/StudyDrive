@@ -82,7 +82,18 @@ while (i < css.length) {
   i = next;
 }
 
-const flat = layered.join("\n") + "\n" + unlayered.join("\n");
+// Safari before 16 has no container queries. The app's container is the main
+// column: the viewport minus the sidebar (15rem from 48rem up) and padding, so
+// approximate each @container query with a viewport media query.
+const flat = (layered.join("\n") + "\n" + unlayered.join("\n")).replace(
+  /@container\s*(\([^{;]*)\{/g,
+  (_, prelude) =>
+    "@media " +
+    prelude
+      .replace(/\(\s*(?:min-width\s*:|width\s*>=)\s*([\d.]+)rem\s*\)/g, (_m, r) => `(min-width: ${Number(r) + 18}rem)`)
+      .replace(/\(\s*(?:max-width\s*:|width\s*<=)\s*([\d.]+)rem\s*\)/g, (_m, r) => `(max-width: ${Number(r) + 18}rem)`) +
+    "{",
+);
 
 const { code } = transform({
   filename: "legacy.css",

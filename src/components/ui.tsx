@@ -21,7 +21,7 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-6 flex flex-col gap-1 pt-2 lg:pt-6">
+    <header className="mb-6 flex flex-col gap-1 pt-2 md:pt-6">
       {back && (
         <Link
           href={back.href}
@@ -196,7 +196,7 @@ const STATUS_STYLE: Record<PaceState, { className: string; icon: IconName }> = {
 export function StatusBadge({ state, estimate }: { state: PaceState; estimate?: boolean }) {
   const s = STATUS_STYLE[state];
   return (
-    <span className={cx("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-footnote font-semibold", s.className)}>
+    <span className={cx("inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-footnote font-semibold", s.className)}>
       <Icon name={s.icon} size={14} strokeWidth={2.2} />
       {PACE_LABEL[state]}
       {estimate && (state === "on_track" || state === "at_risk" || state === "behind") && (
@@ -208,7 +208,7 @@ export function StatusBadge({ state, estimate }: { state: PaceState; estimate?: 
 
 export function Pill({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <span className={cx("inline-flex items-center rounded-md bg-fill px-1.5 py-0.5 text-caption font-semibold text-label-2", className)}>
+    <span className={cx("inline-flex shrink-0 items-center whitespace-nowrap rounded-md bg-fill px-1.5 py-0.5 text-caption font-semibold text-label-2", className)}>
       {children}
     </span>
   );
@@ -318,11 +318,11 @@ export function Skeleton({ className }: { className?: string }) {
 export function PageSkeleton() {
   return (
     <div aria-busy="true" aria-label="Načítám">
-      <div className="mb-6 pt-2 lg:pt-6">
+      <div className="mb-6 pt-2 md:pt-6">
         <Skeleton className="h-10 w-56 rounded-xl" />
         <Skeleton className="mt-2 h-4 w-40 rounded-lg" />
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
         <Skeleton className="h-44" />
         <Skeleton className="h-44" />
         <Skeleton className="h-44" />

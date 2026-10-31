@@ -60,7 +60,7 @@ export default async function TrackPage({ params }: PageProps<"/tracks/[trackId]
       />
 
       {view && (
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="hero-cards mb-8 grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
           <Card className="flex flex-col p-5">
             <p className="text-footnote font-semibold text-label-2">Termín zkoušky</p>
             {track.exam_starts_on ? (

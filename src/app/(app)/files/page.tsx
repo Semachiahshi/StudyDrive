@@ -63,7 +63,7 @@ export default async function FilesPage() {
             Krátké poznámky k předmětu, okruhu nebo tématu — co si zopakovat, na co se zeptat, co nezapomenout.
           </EmptyState>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 @3xl:grid-cols-2">
             {notes.map((n) => (
               <NoteCard key={n.id} note={n} options={options} where={label(n)} />
             ))}

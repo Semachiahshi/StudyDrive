@@ -51,8 +51,8 @@ export default async function SubjectsPage() {
                   </span>
                 </ProgressRing>
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 truncate text-headline font-semibold">
-                    {s.subject.name}
+                  <p className="flex items-center gap-2 text-headline font-semibold">
+                    <span className="truncate">{s.subject.name}</span>
                     {s.subject.code && <Pill>{s.subject.code}</Pill>}
                   </p>
                   <p className="truncate text-footnote text-label-2">
@@ -60,7 +60,7 @@ export default async function SubjectsPage() {
                     {s.progress.topics > 0 && ` · ${formatTopics(s.progress.topics)}`}
                   </p>
                 </div>
-                {s.worstState && <span className="hidden sm:inline"><StatusBadge state={s.worstState} /></span>}
+                {s.worstState && <span className="hidden @lg:inline"><StatusBadge state={s.worstState} /></span>}
                 <Icon name="chevronRight" size={16} className="text-label-3" />
               </Link>
               <MoveButtons entity="subject" id={s.subject.id} first={i === 0} last={i === model.subjects.length - 1} />

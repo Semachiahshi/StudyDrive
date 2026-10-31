@@ -43,6 +43,7 @@ export function SheetForm({
   triggerLabel,
   submitLabel = "Uložit",
   submitVariant = "filled",
+  extra,
   children,
 }: {
   action: FormAction;
@@ -56,6 +57,8 @@ export function SheetForm({
   triggerLabel?: string;
   submitLabel?: string;
   submitVariant?: "filled" | "destructive";
+  /** Shown below the form inside the sheet, e.g. its own action buttons (forms can't nest). */
+  extra?: ReactNode;
   children: ReactNode;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -123,6 +126,7 @@ export function SheetForm({
             <SubmitButton variant={submitVariant}>{submitLabel}</SubmitButton>
           </div>
         </form>
+        {extra && <div className="px-5 pb-5 sm:px-6 sm:pb-6">{extra}</div>}
       </dialog>
     </>
   );

@@ -49,7 +49,7 @@ export default async function OverviewPage() {
       {model.overall.behind.length > 0 && <BehindWarning model={model} bufferDays={data.profile.buffer_days} />}
       {model.missing.noSubjects && <Onboarding />}
 
-      <div className="mb-8 grid gap-4 md:grid-cols-3">
+      <div className="hero-cards mb-8 grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
         <CountdownCard model={model} />
         <ProgressCard model={model} />
         <StreakCard model={model} hasActiveSession={!!data.activeSession} />
@@ -67,7 +67,7 @@ export default async function OverviewPage() {
 
       {model.subjects.length > 0 && <SubjectsSection model={model} />}
 
-      <div className="grid gap-x-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-4 @3xl:grid-cols-2">
         <UpcomingExams model={model} />
         <UpcomingAdmin model={model} />
       </div>
@@ -156,7 +156,7 @@ function Onboarding() {
         StudyDrive je zatím prázdný — žádná témata, data ani postup. Jakmile doplníš předměty, termíny a témata, uvidíš tu,
         kolik práce zbývá a jestli ti tempo stačí.
       </p>
-      <ol className="mt-5 grid gap-3 md:grid-cols-3">
+      <ol className="mt-5 grid grid-cols-1 gap-3 @2xl:grid-cols-3">
         {steps.map((s, i) => (
           <li key={s.title}>
             <Link href={s.href} className="flex h-full gap-3 rounded-xl bg-surface-2 p-4 transition-colors hover:bg-fill">
@@ -323,10 +323,10 @@ function PaceSection({ model, bufferDays, studyDaysPerWeek }: { model: Model; bu
             {measured.map((t) => (
               <li key={t.track.id}>
                 <Link href={`/tracks/${t.track.id}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 hover:opacity-80">
-                  <span className="min-w-0 flex-1 truncate text-subheadline font-medium">
+                  <span className="w-full min-w-0 truncate text-subheadline font-medium @4xl:w-auto @4xl:flex-1">
                     {t.subject.code || t.subject.name} · {t.track.name}
                   </span>
-                  <span className="tabular text-footnote text-label-2">
+                  <span className="tabular min-w-0 flex-1 text-footnote text-label-2 @4xl:flex-none">
                     zbývá {formatSteps(t.pace.remainingSteps)} · {paceText(t.pace.perStudyDay, t.pace.perWeek)}
                   </span>
                   <StatusBadge state={t.pace.state} estimate={t.pace.isEstimate} />
@@ -433,7 +433,7 @@ function SubjectsSection({ model }: { model: Model }) {
         </Link>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
         {model.subjects.map((s) => (
           <Link key={s.subject.id} href={`/subjects/${s.subject.id}`} className="group">
             <Card className="flex h-full flex-col p-4 transition-shadow group-hover:shadow-lg">
