@@ -86,6 +86,27 @@
     window.TextDecoder = LegacyTextDecoder;
   }
 
+  // Diagnostics: remember what JSON.parse choked on, so the error page
+  // (app/global-error.tsx) can show it on devices we can't debug.
+  var nativeParse = JSON.parse;
+  JSON.parse = function (text, reviver) {
+    try {
+      return nativeParse.call(JSON, text, reviver);
+    } catch (e) {
+      var str = String(text);
+      var codes = [];
+      for (var i = 0; i < Math.min(str.length, 12); i++) codes.push(str.charCodeAt(i));
+      window.__legacyJsonFailure = {
+        type: typeof text,
+        length: str.length,
+        head: str.slice(0, 160),
+        codes: codes.join(","),
+      };
+      throw e;
+    }
+  };
+  window.__legacyLoaded = "legacy.js 2";
+
   // <dialog> arrived in Safari 15.4. Before that it is an unknown element:
   // give it show/showModal/close, a backdrop, Escape and the close event.
   if (typeof window.HTMLDialogElement !== "function") {
