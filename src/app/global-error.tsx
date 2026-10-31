@@ -7,6 +7,14 @@ export default function GlobalError({ error, retry }: { error: unknown; retry: (
   const err = error instanceof Error ? (error as Error & { digest?: string }) : null;
   const detail = err ? [err.name + ": " + err.message, err.digest && "digest " + err.digest].filter(Boolean).join(" · ") : String(error);
   const stack = err?.stack?.split("\n").slice(0, 4).join("\n");
+  // Set by public/legacy.js in old Safari.
+  const legacy =
+    typeof window === "undefined"
+      ? ""
+      : [
+          (window as unknown as { __legacyLoaded?: string }).__legacyLoaded ?? "legacy.js not loaded",
+          JSON.stringify((window as unknown as { __legacyJsonFailure?: unknown }).__legacyJsonFailure ?? null),
+        ].join("\n");
 
   return (
     <html lang="cs">
@@ -59,6 +67,7 @@ export default function GlobalError({ error, retry }: { error: unknown; retry: (
             {detail}
             {stack ? "\n\n" + stack : ""}
             {typeof navigator !== "undefined" ? "\n\n" + navigator.userAgent : ""}
+            {legacy ? "\n\n" + legacy : ""}
           </pre>
         </div>
       </body>
