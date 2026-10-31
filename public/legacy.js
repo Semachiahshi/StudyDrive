@@ -81,7 +81,9 @@
           bytes = bytes.slice(0, bytes.length - tail);
         }
       }
-      return this._native.decode(bytes);
+      // iOS 12 also puts a U+FEFF (BOM) in front of decoded rows, which
+      // JSON.parse rejects. The page data never contains a real one.
+      return this._native.decode(bytes).replace(/\uFEFF/g, "");
     };
     window.TextDecoder = LegacyTextDecoder;
   }
@@ -93,6 +95,9 @@
     try {
       return nativeParse.call(JSON, text, reviver);
     } catch (e) {
+      if (typeof text === "string" && text.indexOf("\uFEFF") !== -1) {
+        return nativeParse.call(JSON, text.replace(/\uFEFF/g, ""), reviver);
+      }
       var str = String(text);
       var codes = [];
       for (var i = 0; i < Math.min(str.length, 12); i++) codes.push(str.charCodeAt(i));
@@ -105,7 +110,7 @@
       throw e;
     }
   };
-  window.__legacyLoaded = "legacy.js 2";
+  window.__legacyLoaded = "legacy.js 3";
 
   // <dialog> arrived in Safari 15.4. Before that it is an unknown element:
   // give it show/showModal/close, a backdrop, Escape and the close event.
