@@ -21,10 +21,19 @@ export const viewport: Viewport = {
   ],
 };
 
+// Browsers without cascade layers (Safari before 15.4, e.g. iPad Air 2 on
+// iOS 12) drop every Tailwind rule, so they get public/legacy.css instead,
+// built by scripts/build-legacy-css.mjs. Plain ES5 so old Safari can run it.
+const legacyStylesScript =
+  "if(!window.CSSLayerBlockRule){var l=document.createElement('link');l.rel='stylesheet';l.href='/legacy.css';document.head.appendChild(l)}";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // The service worker marks offline copies with a data-snapshot attribute.
     <html lang="cs" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: legacyStylesScript }} />
+      </head>
       <body className="min-h-dvh bg-bg text-label antialiased">
         {children}
         <ServiceWorkerRegistration />
