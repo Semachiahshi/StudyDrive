@@ -37,6 +37,55 @@
     };
   }
 
+  // Old Safari's TextDecoder mishandles the bytes React reads the page data
+  // with (views into a larger buffer, and { stream: true } across chunks), so
+  // the payload decodes to garbage and JSON.parse fails. Copy each view into
+  // its own buffer and carry incomplete UTF-8 sequences over ourselves.
+  if (window.TextDecoder) {
+    var NativeTextDecoder = window.TextDecoder;
+    var toBytes = function (input) {
+      if (!input) return new Uint8Array(0);
+      if (input instanceof ArrayBuffer) return new Uint8Array(input.slice(0));
+      return new Uint8Array(input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength));
+    };
+    // Length of an unfinished UTF-8 sequence at the end of `bytes` (0 if none).
+    var incompleteTail = function (bytes) {
+      for (var back = 1; back <= 3 && back <= bytes.length; back++) {
+        var b = bytes[bytes.length - back];
+        if ((b & 0xc0) === 0x80) continue; // continuation byte, keep looking
+        var need = b >= 0xf0 ? 4 : b >= 0xe0 ? 3 : b >= 0xc0 ? 2 : 1;
+        return need > back ? back : 0;
+      }
+      return 0;
+    };
+    var LegacyTextDecoder = function (label, options) {
+      this._native = new NativeTextDecoder(label, options);
+      this._pending = null;
+      this.encoding = this._native.encoding;
+      this.fatal = this._native.fatal;
+      this.ignoreBOM = this._native.ignoreBOM;
+    };
+    LegacyTextDecoder.prototype.decode = function (input, options) {
+      var bytes = toBytes(input);
+      if (this._pending) {
+        var joined = new Uint8Array(this._pending.length + bytes.length);
+        joined.set(this._pending, 0);
+        joined.set(bytes, this._pending.length);
+        bytes = joined;
+        this._pending = null;
+      }
+      if (options && options.stream) {
+        var tail = incompleteTail(bytes);
+        if (tail) {
+          this._pending = bytes.slice(bytes.length - tail);
+          bytes = bytes.slice(0, bytes.length - tail);
+        }
+      }
+      return this._native.decode(bytes);
+    };
+    window.TextDecoder = LegacyTextDecoder;
+  }
+
   // <dialog> arrived in Safari 15.4. Before that it is an unknown element:
   // give it show/showModal/close, a backdrop, Escape and the close event.
   if (typeof window.HTMLDialogElement !== "function") {
